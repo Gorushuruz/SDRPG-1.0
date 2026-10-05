@@ -1,0 +1,114 @@
+# SDR Academy
+
+A mobile-first, text-based career RPG that trains you to become a capable B2B
+technology SDR/BDR. You sell enterprise AI software into companies that mostly
+do not want to hear from you. Some of them have a real problem. Some of them
+do not. Telling those two apart is the whole job, and the game never tells you
+which is which.
+
+## Run it
+
+**Option A — open the file directly.** No install, no server:
+
+```
+open /Users/christianwinter/OS3/sdr-academy/index.html
+```
+
+This works because the game is plain scripts with no build step and no modules.
+It is fully playable from `file://`, and saves to the browser's local storage.
+
+**Option B — local dev server** (recommended if you want to test on your phone
+on the same Wi-Fi):
+
+```
+cd /Users/christianwinter/OS3/sdr-academy
+python3 -m http.server 8080
+```
+
+Then open `http://localhost:8080` on your Mac, or `http://<your-mac-ip>:8080`
+on your phone.
+
+**Option C — put it on your phone.** Serve it over the network as above and open
+the LAN address on the phone. Progress is stored per-browser, so it saves on
+whichever device you play it on.
+
+## Save data
+
+Autosaves on every action to `localStorage` under `sdra.save.v3`, with an
+IndexedDB mirror as fallback. Close the tab, refresh, come back later — the
+career is intact. **Settings -> Export save** writes a JSON file you can keep;
+**Import save** restores it. Reset asks twice and will not wipe a career by
+accident.
+
+Note: the save lives in the browser, so clearing site data deletes it. Export
+before you clear browsing data or switch devices.
+
+## Tests
+
+The game logic is tested headlessly and the UI is tested in a real browser.
+
+```
+npm install          # only needed for the browser test (puppeteer)
+node test/harness.js   # engine, data, persistence, integrity  (no deps)
+node test/balance.js   # does skilled play actually beat random play? (no deps)
+node test/career.js    # simulates a 30-week career and prints the curve (no deps)
+node test/uitest.js    # drives the real app in headless Chrome (needs npm install)
+```
+
+## Architecture
+
+Modular, no build step, no framework. Classic scripts sharing a `window.SDRA`
+namespace so `file://` works.
+
+| File | Responsibility |
+|---|---|
+| `src/core.js` | RNG, skills, character state, XP, save/load, achievements |
+| `src/data.js` | Procedural companies, roles, 15 prospect archetypes, objection library |
+| `src/engine.js` | Four-choice moment builder, hidden-variable model, option scoring |
+| `src/calls.js` | Call flow, outcome resolution, coaching debrief |
+| `src/world.js` | Curriculum (20 lessons), manager, random events, day loop |
+| `src/ui.js` | Mobile-first shell, rendering, navigation |
+| `src/boot.js` | Startup and restore |
+
+## How the sales logic works
+
+Every prospect carries hidden variables — trust, curiosity, interest, patience,
+skepticism, problem awareness, political risk, competitive loyalty, budget
+confidence, authority. **They are never displayed.** You read social cues
+("they are giving you short answers") and social behaviour instead.
+
+Each of the four options is a *move* with effect pressure and a situational fit
+penalty. The same move lands differently on different people:
+
+- **Isolating** an objection is the strongest move when there is a real, deep,
+  un-isolated objection — and worth almost nothing when the prospect is politely
+  brushing you off.
+- **Conceding** is right when the account is genuinely poor or they are already
+  hostile, and expensive when there is heat or a problem you have not diagnosed.
+- **Rebutting before you understand** is penalised precisely because it is the
+  most common real-world rookie failure.
+
+Outcomes are not random. Qualification (pain, authority, urgency, budget,
+access) gates everything, an unisolated deep objection caps the result, and
+player skill modulates each move without replacing judgment. A skilled player
+converts roughly 6% of connects to meetings; a random player gets a handful; a
+player who blunders gets none — but a mediocre SDR still occasionally gets
+lucky, and a great SDR still loses to bad timing, budget freezes and internal
+politics.
+
+The four answer positions are shuffled every encounter. No option is ever
+labelled correct, incorrect, best or worst.
+
+## Build stages (brief section 70)
+
+- **Stage 1 — done:** RPG shell, player, day loop, four-choice engine,
+  procedural prospects, hidden variables, scoring, save/load.
+- **Stage 2 — done:** 15 archetypes, prospect memory (including real call
+  history that changes the scene you get), accounts, 21 skills, XP, titles,
+  progression, 13 achievements, coaching debrief, 20-lesson Academy.
+- **Stages 3-5 — partial:** the manager and Academy are live; email/LinkedIn
+  sequencing and the research-time budget are wired only in part.
+- **Stages 6-8 — planned:** deeper CRM/pipeline editing, enterprise
+  multithreading encounters, certification assessment and master mode.
+
+See `STATUS.md` for exactly what is playable and what is stubbed.
