@@ -11,7 +11,7 @@ which is which.
 **Option A — open the file directly.** No install, no server:
 
 ```
-open /Users/christianwinter/OS3/sdr-academy/index.html
+open /Users/<USERNAME>/OS3/sdr-academy/index.html
 ```
 
 This works because the game is plain scripts with no build step and no modules.
@@ -21,7 +21,7 @@ It is fully playable from `file://`, and saves to the browser's local storage.
 on the same Wi-Fi):
 
 ```
-cd /Users/christianwinter/OS3/sdr-academy
+cd /Users/<USERNAME>/OS3/sdr-academy
 python3 -m http.server 8080
 ```
 
