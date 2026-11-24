@@ -43,32 +43,6 @@ accident.
 Note: the save lives in the browser, so clearing site data deletes it. Export
 before you clear browsing data or switch devices.
 
-## Tests
-
-The game logic is tested headlessly and the UI is tested in a real browser.
-
-```
-npm install          # only needed for the browser test (puppeteer)
-node test/harness.js   # engine, data, persistence, integrity  (no deps)
-node test/balance.js   # does skilled play actually beat random play? (no deps)
-node test/career.js    # simulates a 30-week career and prints the curve (no deps)
-node test/uitest.js    # drives the real app in headless Chrome (needs npm install)
-```
-
-## Architecture
-
-Modular, no build step, no framework. Classic scripts sharing a `window.SDRA`
-namespace so `file://` works.
-
-| File | Responsibility |
-|---|---|
-| `src/core.js` | RNG, skills, character state, XP, save/load, achievements |
-| `src/data.js` | Procedural companies, roles, 15 prospect archetypes, objection library |
-| `src/engine.js` | Four-choice moment builder, hidden-variable model, option scoring |
-| `src/calls.js` | Call flow, outcome resolution, coaching debrief |
-| `src/world.js` | Curriculum (20 lessons), manager, random events, day loop |
-| `src/ui.js` | Mobile-first shell, rendering, navigation |
-| `src/boot.js` | Startup and restore |
 
 ## How the sales logic works
 
@@ -98,17 +72,3 @@ politics.
 
 The four answer positions are shuffled every encounter. No option is ever
 labelled correct, incorrect, best or worst.
-
-## Build stages (brief section 70)
-
-- **Stage 1 — done:** RPG shell, player, day loop, four-choice engine,
-  procedural prospects, hidden variables, scoring, save/load.
-- **Stage 2 — done:** 15 archetypes, prospect memory (including real call
-  history that changes the scene you get), accounts, 21 skills, XP, titles,
-  progression, 13 achievements, coaching debrief, 20-lesson Academy.
-- **Stages 3-5 — partial:** the manager and Academy are live; email/LinkedIn
-  sequencing and the research-time budget are wired only in part.
-- **Stages 6-8 — planned:** deeper CRM/pipeline editing, enterprise
-  multithreading encounters, certification assessment and master mode.
-
-See `STATUS.md` for exactly what is playable and what is stubbed.
